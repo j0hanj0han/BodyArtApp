@@ -1,0 +1,62 @@
+# Xcode
+build/
+DerivedData/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+
+# CocoaPods
+Pods/
+Podfile.lock
+
+# Carthage
+Carthage/Build/
+Carthage/Checkouts/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output/
+
+# Code Injection
+iOSInjectionProject/
+
+# macOS
+.DS_Store
+*.swp
+*~.nib
+
+# AppCode
+.idea/
+
+# Archives
+*.xcarchive
+
+# Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# Crash logs
+*.crash
+
+# Provisioning profiles (optional - remove if needed in repo)
+# *.mobileprovision
+# *.provisionprofile
+
+# Environment files
+.env
+.env.*
+
+# Secrets
+*.pem
+*.p12
+credentials.json
+
+# Claude Code
+.claude/
