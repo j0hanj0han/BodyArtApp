@@ -9,19 +9,22 @@ final class Program {
     var exercises: [ExerciseSet] = []
     var isPublic: Bool = false
     var createdAt: Date = Date()
+    var createdByUID: String?
 
     init(
         name: String,
         programDescription: String? = nil,
         exercises: [ExerciseSet] = [],
         isPublic: Bool = false,
-        createdAt: Date = Date()
+        createdAt: Date = Date(),
+        createdByUID: String? = nil
     ) {
         self.name = name
         self.programDescription = programDescription
         self.exercises = exercises
         self.isPublic = isPublic
         self.createdAt = createdAt
+        self.createdByUID = createdByUID
     }
 }
 

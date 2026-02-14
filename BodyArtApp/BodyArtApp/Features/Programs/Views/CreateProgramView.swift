@@ -3,6 +3,7 @@ import SwiftData
 
 struct CreateProgramView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(AuthService.self) private var authService
 
     @State private var name: String = ""
     @State private var programDescription: String = ""
@@ -147,7 +148,8 @@ struct CreateProgramView: View {
             name: name.trimmingCharacters(in: .whitespaces),
             programDescription: programDescription.isEmpty ? nil : programDescription.trimmingCharacters(in: .whitespaces),
             exercises: exercises,
-            isPublic: isPublic
+            isPublic: isPublic,
+            createdByUID: authService.currentUserUID
         )
 
         modelContext.insert(program)

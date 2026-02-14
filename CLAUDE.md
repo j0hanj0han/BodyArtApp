@@ -29,20 +29,32 @@
 ```
 BodyArtApp/
 ├── BodyArtApp.xcodeproj
+├── GoogleService-Info.plist
+├── Info.plist                          # Facebook/Google URL schemes
 └── BodyArtApp/
     ├── App/
-    │   ├── CoachAppApp.swift         # @main + .modelContainer(for:)
-    │   └── ContentView.swift         # TabView principal
+    │   ├── CoachAppApp.swift           # @main + Firebase + ModelContainer
+    │   ├── RootView.swift              # Auth routing (loading/auth/unauth)
+    │   ├── ContentView.swift           # TabView principal
+    │   └── ProfileView.swift           # Profil utilisateur + déconnexion
     ├── Core/
-    │   └── Models/
-    │       ├── Program.swift         # @Model class
-    │       ├── ExerciseSet.swift     # @Model class
-    │       └── WorkoutSession.swift  # Runtime state class
+    │   ├── Models/
+    │   │   ├── Program.swift           # @Model class
+    │   │   ├── ExerciseSet.swift       # @Model class
+    │   │   ├── User.swift              # @Model class (uid, email, role)
+    │   │   └── WorkoutSession.swift    # Runtime state class
+    │   └── Services/
+    │       └── AuthService.swift       # @Observable Firebase Auth (email/Facebook/Google)
     ├── Features/
+    │   ├── Auth/
+    │   │   └── Views/
+    │   │       ├── AuthenticationView.swift  # Container auth (login/signup toggle)
+    │   │       ├── LoginView.swift           # Connexion email + social
+    │   │       └── SignUpView.swift          # Inscription email + social
     │   ├── Programs/
     │   │   └── Views/
-    │   │       ├── ProgramListView.swift   # @Query pour fetch
-    │   │       ├── CreateProgramView.swift # @Environment(\.modelContext)
+    │   │       ├── ProgramListView.swift     # @Query pour fetch
+    │   │       ├── CreateProgramView.swift   # @Environment(\.modelContext)
     │   │       └── AddExerciseView.swift
     │   └── Workout/
     │       ├── ViewModels/
@@ -120,11 +132,14 @@ struct ProgramDetailView: View {
 
 ## 🎨 Navigation
 ```swift
-TabView {
-    ProgramListView()     // Tab 1 - @Query programmes publics
-    CreateProgramView()   // Tab 2 - Création avec modelContext
-    Text("Profil")        // Tab 3 - TODO
-}
+// RootView : routing selon authState
+RootView
+├── .loading → ProgressView
+├── .unauthenticated → AuthenticationView (Login / SignUp)
+└── .authenticated → ContentView (TabView)
+    ├── Tab 1 - ProgramListView (@Query)
+    ├── Tab 2 - CreateProgramView (modelContext)
+    └── Tab 3 - ProfileView (déconnexion)
 ```
 
 ## ✅ Features implémentées
@@ -135,8 +150,10 @@ TabView {
 | 2 | ExecuteProgramView + timer | ✅ Done | ExecuteProgramView.swift, ExecuteProgramViewModel.swift |
 | 3 | CreateProgramView | ✅ Done | CreateProgramView.swift, AddExerciseView.swift |
 | 4 | SwiftData persistance | ✅ Done | Program.swift, ExerciseSet.swift (@Model) |
-| 5 | AuthService | ⏳ TODO | - |
-| 6 | ProfileView | ⏳ TODO | - |
+| 5 | AuthService (Firebase + Facebook + Google) | ✅ Done | AuthService.swift (@Observable) |
+| 6 | Auth Views (Login/SignUp/Routing) | ✅ Done | AuthenticationView.swift, LoginView.swift, SignUpView.swift, RootView.swift |
+| 7 | ProfileView | ✅ Done | ProfileView.swift |
+| 8 | User model | ✅ Done | User.swift (@Model, rôle coach/member) |
 
 ## 🧪 Règles STRICTES
 
