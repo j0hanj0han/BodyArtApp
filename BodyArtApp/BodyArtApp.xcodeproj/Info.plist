@@ -5,32 +5,44 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.googleusercontent</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>fb1211534814282733</string>
+				<!-- Remplace par ton REVERSED_CLIENT_ID depuis GoogleService-Info.plist -->
+				<!-- Format : com.googleusercontent.apps.597314853057-xxxxxxxxx -->
+				<string>com.googleusercontent.apps.597314853057-htc10p8m7vad6ltmm60p31b0ke2mtf4m</string>
 			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>com​.googleusercontent </string>
+			<string>com.facebook</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.597314853057-htc10p8m7vad6ltmm60p31b0ke2mtf4m</string>
+				<string>fb1211534814282733</string>
 			</array>
 		</dict>
 	</array>
+	
+	<!-- Facebook Configuration -->
 	<key>FacebookAppID</key>
 	<string>1211534814282733</string>
-	<key>FacebookClientToken</key>
-	<string>456da12ae7ac6ab72d7d3854a0f00425</string>
 	<key>FacebookDisplayName</key>
 	<string>BodyArtApp</string>
+	<key>FacebookClientToken</key>
+	<string>456da12ae7ac6ab72d7d3854a0f00425</string>
+	
+	<!-- Permissions optionnelles mais utiles -->
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>
 		<string>fb-messenger-share-api</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
 	</array>
 </dict>
 </plist>

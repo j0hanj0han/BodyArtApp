@@ -5,7 +5,7 @@ import FacebookCore
 import GoogleSignIn
 
 @main
-struct CoachAppApp: App {
+struct BodyArtApp: App {
     @State private var authService: AuthService
     let modelContainer: ModelContainer
 
