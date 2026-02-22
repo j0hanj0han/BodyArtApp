@@ -7,7 +7,7 @@ import GoogleSignIn
 @main
 struct BodyArtApp: App {
     @State private var authService: AuthService
-    let modelContainer: ModelContainer
+    private let modelContainerResult: Result<ModelContainer, Error>
 
     init() {
         // Firebase DOIT être configuré AVANT de créer AuthService
@@ -19,31 +19,41 @@ struct BodyArtApp: App {
         _authService = State(initialValue: AuthService())
 
         do {
-            modelContainer = try ModelContainer(for: Program.self, User.self)
+            let container = try ModelContainer(for: Program.self, User.self)
+            modelContainerResult = .success(container)
         } catch {
-            fatalError("Failed to initialize ModelContainer: \(error)")
+            modelContainerResult = .failure(error)
         }
     }
 
     var body: some Scene {
         WindowGroup {
-            RootView()
-                .environment(authService)
-                .task {
-                    Program.seedIfNeeded(modelContext: modelContainer.mainContext)
-                }
-                .onOpenURL { url in
-                    // Handle Facebook callback
-                    ApplicationDelegate.shared.application(
-                        UIApplication.shared,
-                        open: url,
-                        sourceApplication: nil,
-                        annotation: UIApplication.OpenURLOptionsKey.annotation
-                    )
-                    // Handle Google callback
-                    GIDSignIn.sharedInstance.handle(url)
-                }
+            switch modelContainerResult {
+            case .success(let container):
+                RootView()
+                    .environment(authService)
+                    .task {
+                        Program.seedIfNeeded(modelContext: container.mainContext)
+                    }
+                    .onOpenURL { url in
+                        // Handle Facebook callback
+                        ApplicationDelegate.shared.application(
+                            UIApplication.shared,
+                            open: url,
+                            sourceApplication: nil,
+                            annotation: UIApplication.OpenURLOptionsKey.annotation
+                        )
+                        // Handle Google callback
+                        GIDSignIn.sharedInstance.handle(url)
+                    }
+                    .modelContainer(container)
+            case .failure(let error):
+                ContentUnavailableView(
+                    "Erreur de démarrage",
+                    systemImage: "exclamationmark.triangle",
+                    description: Text(error.localizedDescription)
+                )
+            }
         }
-        .modelContainer(modelContainer)
     }
 }

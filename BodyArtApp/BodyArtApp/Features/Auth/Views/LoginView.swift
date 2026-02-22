@@ -1,4 +1,6 @@
 import SwiftUI
+import AuthenticationServices
+import CryptoKit
 
 struct LoginView: View {
     @Environment(AuthService.self) private var authService
@@ -8,6 +10,7 @@ struct LoginView: View {
     @State private var password = ""
     @State private var isLoading = false
     @State private var errorMessage: String?
+    @State private var currentNonce: String?
 
     private var isFormValid: Bool {
         !email.trimmingCharacters(in: .whitespaces).isEmpty &&
@@ -25,6 +28,8 @@ struct LoginView: View {
             loginButton
 
             dividerSection
+
+            appleButton
 
             facebookButton
 
@@ -111,6 +116,20 @@ struct LoginView: View {
         }
     }
 
+    private var appleButton: some View {
+        SignInWithAppleButton(.signIn) { request in
+            let nonce = randomNonceString()
+            currentNonce = nonce
+            request.requestedScopes = [.fullName, .email]
+            request.nonce = sha256(nonce)
+        } onCompletion: { result in
+            Task { await handleAppleSignIn(result) }
+        }
+        .signInWithAppleButtonStyle(.black)
+        .frame(height: 50)
+        .disabled(isLoading)
+    }
+
     private var facebookButton: some View {
         Button {
             Task { await signInWithFacebook() }
@@ -192,6 +211,50 @@ struct LoginView: View {
         }
 
         isLoading = false
+    }
+
+    private func handleAppleSignIn(_ result: Result<ASAuthorization, Error>) async {
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            let authorization = try result.get()
+            guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential,
+                  let tokenData = credential.identityToken,
+                  let idToken = String(data: tokenData, encoding: .utf8),
+                  let nonce = currentNonce else {
+                throw AuthError.appleTokenMissing
+            }
+            try await authService.signInWithApple(
+                idToken: idToken,
+                rawNonce: nonce,
+                fullName: credential.fullName
+            )
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+
+        isLoading = false
+    }
+
+    // MARK: - Nonce Helpers
+
+    private func randomNonceString(length: Int = 32) -> String {
+        precondition(length > 0)
+        var randomBytes = [UInt8](repeating: 0, count: length)
+        let errorCode = SecRandomCopyBytes(kSecRandomDefault, randomBytes.count, &randomBytes)
+        if errorCode != errSecSuccess {
+            fatalError("Unable to generate nonce. SecRandomCopyBytes failed with OSStatus \(errorCode)")
+        }
+        let charset: [Character] = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
+        let nonce = randomBytes.map { byte in charset[Int(byte) % charset.count] }
+        return String(nonce)
+    }
+
+    private func sha256(_ input: String) -> String {
+        let inputData = Data(input.utf8)
+        let hashedData = SHA256.hash(data: inputData)
+        return hashedData.compactMap { String(format: "%02x", $0) }.joined()
     }
 }
 

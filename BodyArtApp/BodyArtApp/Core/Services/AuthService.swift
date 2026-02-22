@@ -1,5 +1,6 @@
 import Foundation
 import FirebaseAuth
+import AuthenticationServices
 import FacebookLogin
 import GoogleSignIn
 import FirebaseCore
@@ -55,6 +56,15 @@ final class AuthService {
     func signIn(email: String, password: String) async throws {
         let result = try await Auth.auth().signIn(withEmail: email, password: password)
         currentUser = result.user
+        authState = .authenticated
+    }
+
+    // MARK: - Apple Auth
+
+    func signInWithApple(idToken: String, rawNonce: String, fullName: PersonNameComponents?) async throws {
+        let credential = OAuthProvider.appleCredential(withIDToken: idToken, rawNonce: rawNonce, fullName: fullName)
+        let authResult = try await Auth.auth().signIn(with: credential)
+        currentUser = authResult.user
         authState = .authenticated
     }
 
@@ -133,6 +143,19 @@ final class AuthService {
         currentUser = nil
         authState = .unauthenticated
     }
+
+    // MARK: - Delete Account
+
+    func deleteAccount() async throws {
+        guard let user = Auth.auth().currentUser else {
+            throw AuthError.noCurrentUser
+        }
+        try await user.delete()
+        LoginManager().logOut()
+        GIDSignIn.sharedInstance.signOut()
+        currentUser = nil
+        authState = .unauthenticated
+    }
 }
 
 // MARK: - Auth Errors
@@ -144,6 +167,9 @@ enum AuthError: LocalizedError {
     case googleClientIDMissing
     case googlePresentationFailed
     case googleTokenMissing
+    case appleTokenMissing
+    case appleSignInFailed
+    case noCurrentUser
 
     var errorDescription: String? {
         switch self {
@@ -159,6 +185,12 @@ enum AuthError: LocalizedError {
             return "Impossible d'afficher la connexion Google"
         case .googleTokenMissing:
             return "Token Google manquant"
+        case .appleTokenMissing:
+            return "Token Apple manquant"
+        case .appleSignInFailed:
+            return "La connexion Apple a échoué"
+        case .noCurrentUser:
+            return "Aucun utilisateur connecté"
         }
     }
 }

@@ -1,9 +1,12 @@
 import SwiftUI
+import SwiftData
 import FirebaseAuth
 
 struct ProfileView: View {
     @Environment(AuthService.self) private var authService
+    @Environment(\.modelContext) private var modelContext
     @State private var showSignOutConfirmation = false
+    @State private var showDeleteAccountConfirmation = false
     @State private var errorMessage: String?
 
     var body: some View {
@@ -36,6 +39,15 @@ struct ProfileView: View {
                     }
                 }
 
+                // MARK: - Suppression du compte
+                Section {
+                    Button(role: .destructive) {
+                        showDeleteAccountConfirmation = true
+                    } label: {
+                        Label("Supprimer le compte", systemImage: "person.crop.circle.badge.minus")
+                    }
+                }
+
                 // MARK: - Erreur
                 if let errorMessage {
                     Section {
@@ -58,6 +70,18 @@ struct ProfileView: View {
             } message: {
                 Text("Vous serez redirigé vers l'écran de connexion.")
             }
+            .confirmationDialog(
+                "Supprimer le compte ?",
+                isPresented: $showDeleteAccountConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button("Supprimer définitivement", role: .destructive) {
+                    Task { await deleteAccount() }
+                }
+                Button("Annuler", role: .cancel) { }
+            } message: {
+                Text("Cette action est irréversible. Toutes vos données seront supprimées.")
+            }
         }
     }
 
@@ -66,6 +90,30 @@ struct ProfileView: View {
             try authService.signOut()
         } catch {
             errorMessage = error.localizedDescription
+        }
+    }
+
+    private func deleteAccount() async {
+        guard let uid = authService.currentUserUID else { return }
+        errorMessage = nil
+
+        do {
+            try await authService.deleteAccount()
+
+            let descriptor = FetchDescriptor<User>(
+                predicate: #Predicate<User> { $0.uid == uid }
+            )
+            if let localUser = try? modelContext.fetch(descriptor).first {
+                modelContext.delete(localUser)
+            }
+        } catch {
+            let nsError = error as NSError
+            if nsError.domain == AuthErrorDomain,
+               nsError.code == AuthErrorCode.requiresRecentLogin.rawValue {
+                errorMessage = "Veuillez vous déconnecter et vous reconnecter avant de supprimer votre compte"
+            } else {
+                errorMessage = error.localizedDescription
+            }
         }
     }
 }
