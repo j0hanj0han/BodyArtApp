@@ -27,7 +27,7 @@
                             <constraint firstItem="BG1-bg-img" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="bg-lft-c"/>
                             <constraint firstItem="BG1-bg-img" firstAttribute="trailing" secondItem="Ze5-6b-2t3" secondAttribute="trailing" id="bg-rgt-c"/>
                             <constraint firstItem="ICO-lc-img" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="ico-cx-c"/>
-                            <constraint firstItem="ICO-lc-img" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" constant="-60" id="ico-cy-c"/>
+                            <constraint firstItem="ICO-lc-img" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" constant="80" id="ico-cy-c"/>
                             <constraint firstItem="ICO-lc-img" firstAttribute="width" secondItem="Ze5-6b-2t3" secondAttribute="width" multiplier="0.28" id="ico-w-c"/>
                             <constraint firstItem="ICO-lc-img" firstAttribute="width" secondItem="ICO-lc-img" secondAttribute="height" id="ico-sq-c"/>
                         </constraints>

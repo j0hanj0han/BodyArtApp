@@ -25,9 +25,9 @@ struct LoginView: View {
                 headerSection
 
                 VStack(spacing: 14) {
-                    appleButton
                     facebookButton
                     googleButton
+                    appleButton
 
                     dividerSection
 
@@ -44,6 +44,7 @@ struct LoginView: View {
             .padding(.horizontal, 16)
             .padding(.bottom, 20)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .toolbar(.hidden, for: .navigationBar)
         .alert("Erreur", isPresented: .constant(errorMessage != nil)) {
             Button("OK") { errorMessage = nil }

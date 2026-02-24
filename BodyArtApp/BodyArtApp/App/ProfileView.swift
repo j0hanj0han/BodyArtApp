@@ -29,6 +29,7 @@ struct ProfileView: View {
                     }
                     .padding(.vertical, 6)
                 }
+                .listRowBackground(Color.white.opacity(0.55))
 
                 // MARK: - Déconnexion
                 Section {
@@ -38,6 +39,7 @@ struct ProfileView: View {
                         Label("Se déconnecter", systemImage: "rectangle.portrait.and.arrow.right")
                     }
                 }
+                .listRowBackground(Color.white.opacity(0.55))
 
                 // MARK: - Suppression du compte
                 Section {
@@ -47,6 +49,7 @@ struct ProfileView: View {
                         Label("Supprimer le compte", systemImage: "person.crop.circle.badge.minus")
                     }
                 }
+                .listRowBackground(Color.white.opacity(0.55))
 
                 // MARK: - Erreur
                 if let errorMessage {
@@ -55,17 +58,20 @@ struct ProfileView: View {
                             .foregroundStyle(.red)
                             .font(.footnote)
                     }
+                    .listRowBackground(Color.white.opacity(0.55))
                 }
             }
+            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
             .navigationTitle("Profil")
+            .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .confirmationDialog(
                 "Se déconnecter ?",
                 isPresented: $showSignOutConfirmation,
                 titleVisibility: .visible
             ) {
-                Button("Se déconnecter", role: .destructive) {
-                    signOut()
-                }
+                Button("Se déconnecter", role: .destructive) { signOut() }
                 Button("Annuler", role: .cancel) { }
             } message: {
                 Text("Vous serez redirigé vers l'écran de connexion.")

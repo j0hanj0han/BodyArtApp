@@ -41,7 +41,10 @@ struct CreateProgramView: View {
                 summarySection
                 saveSection
             }
+            .scrollContentBackground(.hidden)
             .navigationTitle("Nouveau programme")
+            .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .sheet(isPresented: $showingAddExercise) {
                 AddExerciseView { exercise in
                     exercise.order = exercises.count
@@ -65,6 +68,7 @@ struct CreateProgramView: View {
                 .lineLimit(3...6)
             Toggle("Programme public", isOn: $isPublic)
         }
+        .listRowBackground(Color.white.opacity(0.55))
     }
 
     private var exercisesSection: some View {
@@ -100,6 +104,7 @@ struct CreateProgramView: View {
                 }
             }
         }
+        .listRowBackground(Color.white.opacity(0.55))
     }
 
     private var summarySection: some View {
@@ -107,6 +112,7 @@ struct CreateProgramView: View {
             LabeledContent("Nombre d'exercices", value: "\(exercises.count)")
             LabeledContent("Durée totale", value: formattedTotalDuration)
         }
+        .listRowBackground(Color.white.opacity(0.55))
     }
 
     private var saveSection: some View {
@@ -123,6 +129,7 @@ struct CreateProgramView: View {
             }
             .disabled(!isValid)
         }
+        .listRowBackground(Color.white.opacity(0.55))
     }
 
     // MARK: - Actions

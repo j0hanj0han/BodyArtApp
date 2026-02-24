@@ -21,6 +21,8 @@ struct ExecuteProgramView: View {
         .padding()
         .navigationTitle(viewModel.session.program.name)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Terminer") {

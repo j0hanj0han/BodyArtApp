@@ -12,6 +12,8 @@ struct ProgramListView: View {
         NavigationStack {
             content
                 .navigationTitle("Programmes publics")
+                .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+                .toolbarBackground(.visible, for: .navigationBar)
         }
     }
 
@@ -30,8 +32,10 @@ struct ProgramListView: View {
                 } label: {
                     ProgramRowView(program: program)
                 }
+                .listRowBackground(Color.white.opacity(0.55))
             }
             .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
         }
     }
 }
@@ -71,17 +75,20 @@ struct ProgramDetailView: View {
                 Text(program.programDescription ?? "Aucune description")
                     .foregroundStyle(program.programDescription == nil ? .secondary : .primary)
             }
+            .listRowBackground(Color.white.opacity(0.55))
 
             Section("Exercices") {
                 ForEach(program.sortedExercises) { exercise in
                     ExerciseRowView(exercise: exercise)
                 }
             }
+            .listRowBackground(Color.white.opacity(0.55))
 
             Section("Informations") {
                 LabeledContent("Durée totale", value: program.formattedDuration)
                 LabeledContent("Nombre d'exercices", value: "\(program.exercises.count)")
             }
+            .listRowBackground(Color.white.opacity(0.55))
 
             Section {
                 NavigationLink {
@@ -93,10 +100,15 @@ struct ProgramDetailView: View {
                         .frame(maxWidth: .infinity)
                 }
             }
+            .listRowBackground(Color.white.opacity(0.55))
             .disabled(program.exercises.isEmpty)
         }
+        .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
         .navigationTitle(program.name)
         .navigationBarTitleDisplayMode(.large)
+        .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
     }
 }
 
