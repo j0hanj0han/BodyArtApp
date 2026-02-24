@@ -5,10 +5,17 @@ struct AuthenticationView: View {
 
     var body: some View {
         NavigationStack {
-            if showSignUp {
-                SignUpView(showSignUp: $showSignUp)
-            } else {
-                LoginView(showSignUp: $showSignUp)
+            ZStack {
+                Image("Background")
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
+
+                if showSignUp {
+                    SignUpView(showSignUp: $showSignUp)
+                } else {
+                    LoginView(showSignUp: $showSignUp)
+                }
             }
         }
     }

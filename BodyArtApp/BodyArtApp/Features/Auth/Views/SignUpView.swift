@@ -21,21 +21,32 @@ struct SignUpView: View {
     }
 
     var body: some View {
-        VStack(spacing: 24) {
-            Spacer()
+        ScrollView {
+            VStack(spacing: 20) {
+                Spacer().frame(height: 60)
 
-            headerSection
+                headerSection
 
-            formSection
+                Spacer().frame(height: 8)
 
-            signUpButton
+                // Carte frosted glass
+                VStack(spacing: 14) {
+                    formSection
+                    signUpButton
 
-            Spacer()
+                    Divider()
 
-            loginSection
+                    loginSection
+                }
+                .padding(24)
+                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 24))
+                .padding(.horizontal)
+
+                Spacer().frame(height: 40)
+            }
         }
-        .padding()
-        .navigationTitle("Créer un compte")
+        .scrollBounceBehavior(.basedOnSize)
+        .toolbar(.hidden, for: .navigationBar)
         .alert("Erreur", isPresented: .constant(errorMessage != nil)) {
             Button("OK") { errorMessage = nil }
         } message: {
@@ -50,21 +61,25 @@ struct SignUpView: View {
     private var headerSection: some View {
         VStack(spacing: 8) {
             Image(systemName: "person.crop.circle.badge.plus")
-                .font(.system(size: 60))
-                .foregroundStyle(.blue)
+                .font(.system(size: 64))
+                .foregroundStyle(.white)
+                .shadow(color: .black.opacity(0.3), radius: 8, y: 4)
 
             Text("Rejoignez-nous")
                 .font(.largeTitle)
                 .fontWeight(.bold)
+                .foregroundStyle(.white)
+                .shadow(color: .black.opacity(0.4), radius: 4, y: 2)
 
             Text("Créez votre compte pour commencer")
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.white.opacity(0.9))
+                .shadow(color: .black.opacity(0.3), radius: 2)
         }
     }
 
     private var formSection: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 12) {
             TextField("Email", text: $email)
                 .textFieldStyle(.roundedBorder)
                 .textContentType(.emailAddress)
@@ -122,20 +137,21 @@ struct SignUpView: View {
     private func signUp() async {
         isLoading = true
         errorMessage = nil
-
         do {
             try await authService.signUp(email: email, password: password)
         } catch {
             errorMessage = error.localizedDescription
         }
-
         isLoading = false
     }
 }
 
 #Preview {
     NavigationStack {
-        SignUpView(showSignUp: .constant(true))
-            .environment(AuthService())
+        ZStack {
+            Image("Background").resizable().scaledToFill().ignoresSafeArea()
+            SignUpView(showSignUp: .constant(true))
+        }
     }
+    .environment(AuthService())
 }

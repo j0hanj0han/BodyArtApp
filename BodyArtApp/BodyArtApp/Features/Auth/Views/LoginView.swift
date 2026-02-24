@@ -18,29 +18,38 @@ struct LoginView: View {
     }
 
     var body: some View {
-        VStack(spacing: 24) {
-            Spacer()
+        ScrollView {
+            VStack(spacing: 20) {
+                Spacer().frame(height: 60)
 
-            headerSection
+                headerSection
 
-            formSection
+                Spacer().frame(height: 8)
 
-            loginButton
+                // Carte frosted glass
+                VStack(spacing: 14) {
+                    appleButton
+                    facebookButton
+                    googleButton
 
-            dividerSection
+                    dividerSection
 
-            appleButton
+                    formSection
+                    loginButton
 
-            facebookButton
+                    Divider()
 
-            googleButton
+                    signUpSection
+                }
+                .padding(24)
+                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 24))
+                .padding(.horizontal)
 
-            Spacer()
-
-            signUpSection
+                Spacer().frame(height: 40)
+            }
         }
-        .padding()
-        .navigationTitle("Connexion")
+        .scrollBounceBehavior(.basedOnSize)
+        .toolbar(.hidden, for: .navigationBar)
         .alert("Erreur", isPresented: .constant(errorMessage != nil)) {
             Button("OK") { errorMessage = nil }
         } message: {
@@ -55,64 +64,20 @@ struct LoginView: View {
     private var headerSection: some View {
         VStack(spacing: 8) {
             Image(systemName: "figure.run.circle.fill")
-                .font(.system(size: 60))
-                .foregroundStyle(.blue)
+                .font(.system(size: 64))
+                .foregroundStyle(.white)
+                .shadow(color: .black.opacity(0.3), radius: 8, y: 4)
 
             Text("BodyArtApp")
                 .font(.largeTitle)
                 .fontWeight(.bold)
+                .foregroundStyle(.white)
+                .shadow(color: .black.opacity(0.4), radius: 4, y: 2)
 
             Text("Connectez-vous pour continuer")
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
-        }
-    }
-
-    private var formSection: some View {
-        VStack(spacing: 16) {
-            TextField("Email", text: $email)
-                .textFieldStyle(.roundedBorder)
-                .textContentType(.emailAddress)
-                .keyboardType(.emailAddress)
-                .textInputAutocapitalization(.never)
-                .autocorrectionDisabled()
-
-            SecureField("Mot de passe", text: $password)
-                .textFieldStyle(.roundedBorder)
-                .textContentType(.password)
-        }
-    }
-
-    private var loginButton: some View {
-        Button {
-            Task { await signIn() }
-        } label: {
-            if isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity)
-            } else {
-                Text("Se connecter")
-                    .frame(maxWidth: .infinity)
-            }
-        }
-        .buttonStyle(.borderedProminent)
-        .controlSize(.large)
-        .disabled(!isFormValid || isLoading)
-    }
-
-    private var dividerSection: some View {
-        HStack {
-            Rectangle()
-                .fill(.secondary.opacity(0.3))
-                .frame(height: 1)
-
-            Text("ou")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-
-            Rectangle()
-                .fill(.secondary.opacity(0.3))
-                .frame(height: 1)
+                .foregroundStyle(.white.opacity(0.9))
+                .shadow(color: .black.opacity(0.3), radius: 2)
         }
     }
 
@@ -160,6 +125,55 @@ struct LoginView: View {
         .disabled(isLoading)
     }
 
+    private var dividerSection: some View {
+        HStack {
+            Rectangle()
+                .fill(.secondary.opacity(0.3))
+                .frame(height: 1)
+
+            Text("ou par e-mail")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .fixedSize()
+
+            Rectangle()
+                .fill(.secondary.opacity(0.3))
+                .frame(height: 1)
+        }
+    }
+
+    private var formSection: some View {
+        VStack(spacing: 12) {
+            TextField("Email", text: $email)
+                .textFieldStyle(.roundedBorder)
+                .textContentType(.emailAddress)
+                .keyboardType(.emailAddress)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+
+            SecureField("Mot de passe", text: $password)
+                .textFieldStyle(.roundedBorder)
+                .textContentType(.password)
+        }
+    }
+
+    private var loginButton: some View {
+        Button {
+            Task { await signIn() }
+        } label: {
+            if isLoading {
+                ProgressView()
+                    .frame(maxWidth: .infinity)
+            } else {
+                Text("Se connecter")
+                    .frame(maxWidth: .infinity)
+            }
+        }
+        .buttonStyle(.borderedProminent)
+        .controlSize(.large)
+        .disabled(!isFormValid || isLoading)
+    }
+
     private var signUpSection: some View {
         HStack {
             Text("Pas encore de compte ?")
@@ -177,46 +191,39 @@ struct LoginView: View {
     private func signIn() async {
         isLoading = true
         errorMessage = nil
-
         do {
             try await authService.signIn(email: email, password: password)
         } catch {
             errorMessage = error.localizedDescription
         }
-
         isLoading = false
     }
 
     private func signInWithFacebook() async {
         isLoading = true
         errorMessage = nil
-
         do {
             try await authService.signInWithFacebook()
         } catch {
             errorMessage = error.localizedDescription
         }
-
         isLoading = false
     }
 
     private func signInWithGoogle() async {
         isLoading = true
         errorMessage = nil
-
         do {
             try await authService.signInWithGoogle()
         } catch {
             errorMessage = error.localizedDescription
         }
-
         isLoading = false
     }
 
     private func handleAppleSignIn(_ result: Result<ASAuthorization, Error>) async {
         isLoading = true
         errorMessage = nil
-
         do {
             let authorization = try result.get()
             guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential,
@@ -233,7 +240,6 @@ struct LoginView: View {
         } catch {
             errorMessage = error.localizedDescription
         }
-
         isLoading = false
     }
 
@@ -260,7 +266,10 @@ struct LoginView: View {
 
 #Preview {
     NavigationStack {
-        LoginView(showSignUp: .constant(false))
-            .environment(AuthService())
+        ZStack {
+            Image("Background").resizable().scaledToFill().ignoresSafeArea()
+            LoginView(showSignUp: .constant(false))
+        }
     }
+    .environment(AuthService())
 }
