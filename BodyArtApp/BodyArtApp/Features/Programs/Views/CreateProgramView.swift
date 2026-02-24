@@ -39,9 +39,10 @@ struct CreateProgramView: View {
                     saveSection
                 }
                 .scrollContentBackground(.hidden)
+                .navigationTitle("Nouveau programme")
+                .navigationBarTitleDisplayMode(.large)
+                .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
             }
-            .navigationTitle("Nouveau programme")
-            .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
             .sheet(isPresented: $showingAddExercise) {
                 AddExerciseView { exercise in
                     exercise.order = exercises.count

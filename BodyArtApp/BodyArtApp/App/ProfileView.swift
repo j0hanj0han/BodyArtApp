@@ -30,9 +30,10 @@ struct ProfileView: View {
                 }
                 .listStyle(.insetGrouped)
                 .scrollContentBackground(.hidden)
+                .navigationTitle("Profil")
+                .navigationBarTitleDisplayMode(.large)
+                .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
             }
-            .navigationTitle("Profil")
-            .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
             .confirmationDialog(
                 "Se déconnecter ?",
                 isPresented: $showSignOutConfirmation,

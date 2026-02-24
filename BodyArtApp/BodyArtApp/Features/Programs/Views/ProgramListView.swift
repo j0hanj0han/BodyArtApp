@@ -13,8 +13,6 @@ struct ProgramListView: View {
     var body: some View {
         NavigationStack {
             content
-                .navigationTitle("Programmes publics")
-                .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
         }
     }
 
@@ -29,6 +27,8 @@ struct ProgramListView: View {
                     systemImage: "list.bullet.clipboard",
                     description: Text("Aucun programme public disponible pour le moment.")
                 )
+                .navigationTitle("Programmes publics")
+                .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
             } else {
                 List(programs) { program in
                     NavigationLink {
@@ -40,6 +40,9 @@ struct ProgramListView: View {
                 }
                 .listStyle(.insetGrouped)
                 .scrollContentBackground(.hidden)
+                .navigationTitle("Programmes publics")
+                .navigationBarTitleDisplayMode(.large)
+                .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
             }
         }
     }
@@ -90,13 +93,13 @@ struct ProgramDetailView: View {
             }
             .listStyle(.insetGrouped)
             .scrollContentBackground(.hidden)
+            .navigationTitle(program.name)
+            .navigationBarTitleDisplayMode(.large)
+            .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
             .safeAreaInset(edge: .bottom) {
                 startWorkoutBar
             }
         }
-        .navigationTitle(program.name)
-        .navigationBarTitleDisplayMode(.large)
-        .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
     }
 
     private var descriptionSection: some View {
