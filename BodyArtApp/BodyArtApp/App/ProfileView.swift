@@ -32,7 +32,6 @@ struct ProfileView: View {
                 .scrollContentBackground(.hidden)
                 .navigationTitle("Profil")
                 .navigationBarTitleDisplayMode(.large)
-                .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
             }
             .confirmationDialog(
                 "Se déconnecter ?",

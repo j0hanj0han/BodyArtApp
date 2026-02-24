@@ -21,28 +21,34 @@ struct ProgramListView: View {
         ZStack {
             Image("Background").resizable().scaledToFill().ignoresSafeArea()
 
-            if programs.isEmpty {
-                ContentUnavailableView(
-                    "Aucun programme",
-                    systemImage: "list.bullet.clipboard",
-                    description: Text("Aucun programme public disponible pour le moment.")
-                )
-                .navigationTitle("Programmes publics")
-                .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
-            } else {
-                List(programs) { program in
-                    NavigationLink {
-                        ProgramDetailView(program: program)
-                    } label: {
-                        ProgramRowView(program: program)
+            List {
+                if programs.isEmpty {
+                    // Empty state rendered inside the List so the scroll
+                    // container — and therefore the large title — always
+                    // has a stable anchor that iOS 26 can track.
+                } else {
+                    ForEach(programs) { program in
+                        NavigationLink {
+                            ProgramDetailView(program: program)
+                        } label: {
+                            ProgramRowView(program: program)
+                        }
+                        .listRowBackground(Rectangle().fill(.regularMaterial))
                     }
-                    .listRowBackground(Rectangle().fill(.regularMaterial))
                 }
-                .listStyle(.insetGrouped)
-                .scrollContentBackground(.hidden)
-                .navigationTitle("Programmes publics")
-                .navigationBarTitleDisplayMode(.large)
-                .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+            }
+            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
+            .navigationTitle("Programmes publics")
+            .navigationBarTitleDisplayMode(.large)
+            .overlay {
+                if programs.isEmpty {
+                    ContentUnavailableView(
+                        "Aucun programme",
+                        systemImage: "list.bullet.clipboard",
+                        description: Text("Aucun programme public disponible pour le moment.")
+                    )
+                }
             }
         }
     }
@@ -95,7 +101,6 @@ struct ProgramDetailView: View {
             .scrollContentBackground(.hidden)
             .navigationTitle(program.name)
             .navigationBarTitleDisplayMode(.large)
-            .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
             .safeAreaInset(edge: .bottom) {
                 startWorkoutBar
             }

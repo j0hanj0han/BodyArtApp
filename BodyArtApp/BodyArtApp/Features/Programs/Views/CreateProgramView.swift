@@ -41,7 +41,6 @@ struct CreateProgramView: View {
                 .scrollContentBackground(.hidden)
                 .navigationTitle("Nouveau programme")
                 .navigationBarTitleDisplayMode(.large)
-                .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
             }
             .sheet(isPresented: $showingAddExercise) {
                 AddExerciseView { exercise in
