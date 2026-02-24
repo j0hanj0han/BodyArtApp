@@ -18,15 +18,12 @@ struct LoginView: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 20) {
-                Spacer().frame(height: 60)
+        VStack(spacing: 0) {
+            Spacer()
 
+            VStack(spacing: 16) {
                 headerSection
 
-                Spacer().frame(height: 8)
-
-                // Carte frosted glass
                 VStack(spacing: 14) {
                     appleButton
                     facebookButton
@@ -41,14 +38,12 @@ struct LoginView: View {
 
                     signUpSection
                 }
-                .padding(24)
-                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 24))
-                .padding(.horizontal)
-
-                Spacer().frame(height: 40)
             }
+            .padding(24)
+            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 28, style: .continuous))
+            .padding(.horizontal, 16)
+            .padding(.bottom, 20)
         }
-        .scrollBounceBehavior(.basedOnSize)
         .toolbar(.hidden, for: .navigationBar)
         .alert("Erreur", isPresented: .constant(errorMessage != nil)) {
             Button("OK") { errorMessage = nil }
@@ -63,21 +58,20 @@ struct LoginView: View {
 
     private var headerSection: some View {
         VStack(spacing: 8) {
-            Image(systemName: "figure.run.circle.fill")
-                .font(.system(size: 64))
-                .foregroundStyle(.white)
-                .shadow(color: .black.opacity(0.3), radius: 8, y: 4)
+            Image("LaunchIcon")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 72, height: 72)
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
 
             Text("BodyArtApp")
                 .font(.largeTitle)
                 .fontWeight(.bold)
-                .foregroundStyle(.white)
-                .shadow(color: .black.opacity(0.4), radius: 4, y: 2)
+                .foregroundStyle(.black)
 
             Text("Connectez-vous pour continuer")
                 .font(.subheadline)
-                .foregroundStyle(.white.opacity(0.9))
-                .shadow(color: .black.opacity(0.3), radius: 2)
+                .foregroundStyle(.black.opacity(0.6))
         }
     }
 
