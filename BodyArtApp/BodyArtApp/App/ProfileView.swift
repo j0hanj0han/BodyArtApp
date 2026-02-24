@@ -31,7 +31,7 @@ struct ProfileView: View {
                 .listStyle(.insetGrouped)
                 .scrollContentBackground(.hidden)
                 .navigationTitle("Profil")
-                .navigationBarTitleDisplayMode(.large)
+                .navigationBarTitleDisplayMode(.inline)
             }
             .confirmationDialog(
                 "Se déconnecter ?",

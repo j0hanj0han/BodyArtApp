@@ -40,7 +40,7 @@ struct ProgramListView: View {
             .listStyle(.insetGrouped)
             .scrollContentBackground(.hidden)
             .navigationTitle("Programmes publics")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
             .overlay {
                 if programs.isEmpty {
                     ContentUnavailableView(
@@ -100,7 +100,7 @@ struct ProgramDetailView: View {
             .listStyle(.insetGrouped)
             .scrollContentBackground(.hidden)
             .navigationTitle(program.name)
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
             .safeAreaInset(edge: .bottom) {
                 startWorkoutBar
             }

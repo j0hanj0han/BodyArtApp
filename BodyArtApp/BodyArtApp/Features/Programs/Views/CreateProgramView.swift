@@ -40,7 +40,7 @@ struct CreateProgramView: View {
                 }
                 .scrollContentBackground(.hidden)
                 .navigationTitle("Nouveau programme")
-                .navigationBarTitleDisplayMode(.large)
+                .navigationBarTitleDisplayMode(.inline)
             }
             .sheet(isPresented: $showingAddExercise) {
                 AddExerciseView { exercise in
