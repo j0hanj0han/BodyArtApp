@@ -18,11 +18,14 @@ struct ExecuteProgramView: View {
             controlsSection
             settingsSection
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background {
+            Image("Background").resizable().scaledToFill().ignoresSafeArea()
+        }
         .padding()
         .navigationTitle(viewModel.session.program.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
-        .toolbarBackground(.visible, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Terminer") {

@@ -21,60 +21,68 @@ struct SignUpView: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 20) {
-                Spacer().frame(height: 60)
+        VStack(spacing: 0) {
+            backButton
+                .padding(.horizontal, 20)
+                .padding(.top, 60)
 
+            Spacer()
+
+            VStack(spacing: 16) {
                 headerSection
 
-                Spacer().frame(height: 8)
-
-                // Carte frosted glass
                 VStack(spacing: 14) {
                     formSection
                     signUpButton
-
-                    Divider()
-
-                    loginSection
                 }
-                .padding(24)
-                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 24))
-                .padding(.horizontal)
-
-                Spacer().frame(height: 40)
             }
+            .padding(24)
+            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 28, style: .continuous))
+            .padding(.horizontal, 16)
+            .padding(.bottom, 20)
         }
-        .scrollBounceBehavior(.basedOnSize)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .toolbar(.hidden, for: .navigationBar)
         .alert("Erreur", isPresented: .constant(errorMessage != nil)) {
             Button("OK") { errorMessage = nil }
         } message: {
-            if let errorMessage {
-                Text(errorMessage)
-            }
+            if let errorMessage { Text(errorMessage) }
         }
     }
 
     // MARK: - Sections
 
+    private var backButton: some View {
+        HStack {
+            Button(action: { showSignUp = false }) {
+                HStack(spacing: 4) {
+                    Image(systemName: "chevron.left")
+                        .fontWeight(.semibold)
+                    Text("Retour")
+                }
+                .foregroundStyle(.white)
+                .shadow(color: .black.opacity(0.4), radius: 3)
+            }
+            Spacer()
+        }
+    }
+
     private var headerSection: some View {
         VStack(spacing: 8) {
-            Image(systemName: "person.crop.circle.badge.plus")
-                .font(.system(size: 64))
-                .foregroundStyle(.white)
-                .shadow(color: .black.opacity(0.3), radius: 8, y: 4)
+            Image("LaunchIcon")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 72, height: 72)
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
 
-            Text("Rejoignez-nous")
+            Text("Créer un compte")
                 .font(.largeTitle)
                 .fontWeight(.bold)
-                .foregroundStyle(.white)
-                .shadow(color: .black.opacity(0.4), radius: 4, y: 2)
+                .foregroundStyle(.black)
 
-            Text("Créez votre compte pour commencer")
+            Text("Rejoignez BodyArtApp")
                 .font(.subheadline)
-                .foregroundStyle(.white.opacity(0.9))
-                .shadow(color: .black.opacity(0.3), radius: 2)
+                .foregroundStyle(.black.opacity(0.6))
         }
     }
 
@@ -108,28 +116,14 @@ struct SignUpView: View {
             Task { await signUp() }
         } label: {
             if isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity)
+                ProgressView().frame(maxWidth: .infinity)
             } else {
-                Text("Créer mon compte")
-                    .frame(maxWidth: .infinity)
+                Text("Créer mon compte").frame(maxWidth: .infinity)
             }
         }
         .buttonStyle(.borderedProminent)
         .controlSize(.large)
         .disabled(!isFormValid || isLoading)
-    }
-
-    private var loginSection: some View {
-        HStack {
-            Text("Déjà un compte ?")
-                .foregroundStyle(.secondary)
-
-            Button("Se connecter") {
-                showSignUp = false
-            }
-        }
-        .font(.subheadline)
     }
 
     // MARK: - Actions

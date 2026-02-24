@@ -27,9 +27,7 @@ struct CreateProgramView: View {
     private var formattedTotalDuration: String {
         let minutes = totalDuration / 60
         let seconds = totalDuration % 60
-        if minutes > 0 {
-            return "\(minutes) min \(seconds) s"
-        }
+        if minutes > 0 { return "\(minutes) min \(seconds) s" }
         return "\(seconds) s"
     }
 
@@ -42,9 +40,11 @@ struct CreateProgramView: View {
                 saveSection
             }
             .scrollContentBackground(.hidden)
+            .background {
+                Image("Background").resizable().scaledToFill().ignoresSafeArea()
+            }
             .navigationTitle("Nouveau programme")
             .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
             .sheet(isPresented: $showingAddExercise) {
                 AddExerciseView { exercise in
                     exercise.order = exercises.count
@@ -99,8 +99,7 @@ struct CreateProgramView: View {
                 Text("Exercices")
                 Spacer()
                 if !exercises.isEmpty {
-                    Text("\(exercises.count)")
-                        .foregroundStyle(.secondary)
+                    Text("\(exercises.count)").foregroundStyle(.secondary)
                 }
             }
         }
@@ -122,8 +121,7 @@ struct CreateProgramView: View {
             } label: {
                 HStack {
                     Spacer()
-                    Text("Enregistrer le programme")
-                        .fontWeight(.semibold)
+                    Text("Enregistrer le programme").fontWeight(.semibold)
                     Spacer()
                 }
             }
@@ -158,7 +156,6 @@ struct CreateProgramView: View {
             isPublic: isPublic,
             createdByUID: authService.currentUserUID
         )
-
         modelContext.insert(program)
         savedProgramName = program.name
         showingSaveSuccess = true
@@ -179,9 +176,7 @@ struct ExerciseEditRowView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(exercise.name)
-                .font(.headline)
-
+            Text(exercise.name).font(.headline)
             HStack(spacing: 12) {
                 Label("\(exercise.durationSeconds)s", systemImage: "timer")
                 Label("\(exercise.pauseSeconds)s", systemImage: "pause.circle")

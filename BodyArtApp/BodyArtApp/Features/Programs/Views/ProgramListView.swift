@@ -13,7 +13,6 @@ struct ProgramListView: View {
             content
                 .navigationTitle("Programmes publics")
                 .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
-                .toolbarBackground(.visible, for: .navigationBar)
         }
     }
 
@@ -25,6 +24,10 @@ struct ProgramListView: View {
                 systemImage: "list.bullet.clipboard",
                 description: Text("Aucun programme public disponible pour le moment.")
             )
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background {
+                Image("Background").resizable().scaledToFill().ignoresSafeArea()
+            }
         } else {
             List(programs) { program in
                 NavigationLink {
@@ -36,6 +39,9 @@ struct ProgramListView: View {
             }
             .listStyle(.insetGrouped)
             .scrollContentBackground(.hidden)
+            .background {
+                Image("Background").resizable().scaledToFill().ignoresSafeArea()
+            }
         }
     }
 }
@@ -105,10 +111,12 @@ struct ProgramDetailView: View {
         }
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
+        .background {
+            Image("Background").resizable().scaledToFill().ignoresSafeArea()
+        }
         .navigationTitle(program.name)
         .navigationBarTitleDisplayMode(.large)
         .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
-        .toolbarBackground(.visible, for: .navigationBar)
     }
 }
 
