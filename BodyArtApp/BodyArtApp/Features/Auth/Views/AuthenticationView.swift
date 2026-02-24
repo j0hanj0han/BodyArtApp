@@ -13,10 +13,19 @@ struct AuthenticationView: View {
 
                 if showSignUp {
                     SignUpView(showSignUp: $showSignUp)
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .trailing),
+                            removal: .move(edge: .trailing)
+                        ))
                 } else {
                     LoginView(showSignUp: $showSignUp)
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .leading),
+                            removal: .move(edge: .leading)
+                        ))
                 }
             }
+            .animation(.spring(response: 0.4, dampingFraction: 0.85), value: showSignUp)
         }
     }
 }

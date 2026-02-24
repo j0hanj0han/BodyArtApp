@@ -28,12 +28,27 @@ struct SignUpView: View {
 
             Spacer()
 
-            VStack(spacing: 16) {
-                headerSection
+            VStack(spacing: 20) {
+                SignUpHeaderView()
 
                 VStack(spacing: 14) {
-                    formSection
-                    signUpButton
+                    SignUpFormView(
+                        email: $email,
+                        password: $password,
+                        confirmPassword: $confirmPassword,
+                        passwordMismatch: passwordMismatch
+                    )
+
+                    Button(action: { Task { await signUp() } }) {
+                        Group {
+                            if isLoading { ProgressView() }
+                            else { Text("Créer mon compte") }
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                    .disabled(!isFormValid || isLoading)
                 }
             }
             .padding(24)
@@ -50,14 +65,11 @@ struct SignUpView: View {
         }
     }
 
-    // MARK: - Sections
-
     private var backButton: some View {
         HStack {
             Button(action: { showSignUp = false }) {
-                HStack(spacing: 4) {
-                    Image(systemName: "chevron.left")
-                        .fontWeight(.semibold)
+                HStack(spacing: 6) {
+                    Image(systemName: "chevron.left").fontWeight(.semibold)
                     Text("Retour")
                 }
                 .foregroundStyle(.white)
@@ -67,26 +79,43 @@ struct SignUpView: View {
         }
     }
 
-    private var headerSection: some View {
+    private func signUp() async {
+        isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
+        do { try await authService.signUp(email: email, password: password) }
+        catch { errorMessage = error.localizedDescription }
+    }
+}
+
+// MARK: - Sub-views
+
+struct SignUpHeaderView: View {
+    var body: some View {
         VStack(spacing: 8) {
             Image("LaunchIcon")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 72, height: 72)
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .shadow(color: .black.opacity(0.15), radius: 8, y: 4)
 
             Text("Créer un compte")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .foregroundStyle(.black)
+                .font(.largeTitle).fontWeight(.bold)
 
             Text("Rejoignez BodyArtApp")
-                .font(.subheadline)
-                .foregroundStyle(.black.opacity(0.6))
+                .font(.subheadline).foregroundStyle(.secondary)
         }
     }
+}
 
-    private var formSection: some View {
+struct SignUpFormView: View {
+    @Binding var email: String
+    @Binding var password: String
+    @Binding var confirmPassword: String
+    let passwordMismatch: Bool
+
+    var body: some View {
         VStack(spacing: 12) {
             TextField("Email", text: $email)
                 .textFieldStyle(.roundedBorder)
@@ -109,34 +138,6 @@ struct SignUpView: View {
                     .foregroundStyle(.red)
             }
         }
-    }
-
-    private var signUpButton: some View {
-        Button {
-            Task { await signUp() }
-        } label: {
-            if isLoading {
-                ProgressView().frame(maxWidth: .infinity)
-            } else {
-                Text("Créer mon compte").frame(maxWidth: .infinity)
-            }
-        }
-        .buttonStyle(.borderedProminent)
-        .controlSize(.large)
-        .disabled(!isFormValid || isLoading)
-    }
-
-    // MARK: - Actions
-
-    private func signUp() async {
-        isLoading = true
-        errorMessage = nil
-        do {
-            try await authService.signUp(email: email, password: password)
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-        isLoading = false
     }
 }
 

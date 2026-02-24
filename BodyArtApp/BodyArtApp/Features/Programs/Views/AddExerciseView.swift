@@ -131,6 +131,7 @@ private struct ExercisePreviewSection: View {
                 Text(name.isEmpty ? "Nom de l'exercice" : name)
                     .font(.headline)
                     .foregroundStyle(name.isEmpty ? .tertiary : .primary)
+
                 HStack(spacing: 16) {
                     Label("\(durationSeconds)s travail", systemImage: "timer")
                     Label("\(pauseSeconds)s repos", systemImage: "pause.circle")
@@ -138,6 +139,8 @@ private struct ExercisePreviewSection: View {
                 }
                 .font(.caption)
                 .foregroundStyle(.secondary)
+                .symbolRenderingMode(.hierarchical)
+
                 Text("Durée totale: \(totalTime / 60) min \(totalTime % 60) s")
                     .font(.caption)
                     .foregroundStyle(.tertiary)

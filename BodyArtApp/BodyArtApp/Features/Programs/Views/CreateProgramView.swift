@@ -9,7 +9,6 @@ struct CreateProgramView: View {
     @State private var programDescription: String = ""
     @State private var exercises: [ExerciseSet] = []
     @State private var isPublic: Bool = false
-
     @State private var showingAddExercise = false
     @State private var showingSaveSuccess = false
     @State private var savedProgramName: String = ""
@@ -19,16 +18,13 @@ struct CreateProgramView: View {
     }
 
     private var totalDuration: Int {
-        exercises.reduce(0) { total, exercise in
-            total + (exercise.durationSeconds + exercise.pauseSeconds) * exercise.laps
-        }
+        exercises.reduce(0) { $0 + ($1.durationSeconds + $1.pauseSeconds) * $1.laps }
     }
 
     private var formattedTotalDuration: String {
         let minutes = totalDuration / 60
         let seconds = totalDuration % 60
-        if minutes > 0 { return "\(minutes) min \(seconds) s" }
-        return "\(seconds) s"
+        return minutes > 0 ? "\(minutes) min \(seconds) s" : "\(seconds) s"
     }
 
     var body: some View {
@@ -51,6 +47,8 @@ struct CreateProgramView: View {
                     exercise.order = exercises.count
                     exercises.append(exercise)
                 }
+                .presentationBackground(.regularMaterial)
+                .presentationCornerRadius(28)
             }
             .alert("Programme créé", isPresented: $showingSaveSuccess) {
                 Button("OK") { reset() }
@@ -69,7 +67,7 @@ struct CreateProgramView: View {
                 .lineLimit(3...6)
             Toggle("Programme public", isOn: $isPublic)
         }
-        .listRowBackground(Color.white.opacity(0.55))
+        .listRowBackground(Rectangle().fill(.regularMaterial))
     }
 
     private var exercisesSection: some View {
@@ -104,7 +102,7 @@ struct CreateProgramView: View {
                 }
             }
         }
-        .listRowBackground(Color.white.opacity(0.55))
+        .listRowBackground(Rectangle().fill(.regularMaterial))
     }
 
     private var summarySection: some View {
@@ -112,7 +110,7 @@ struct CreateProgramView: View {
             LabeledContent("Nombre d'exercices", value: "\(exercises.count)")
             LabeledContent("Durée totale", value: formattedTotalDuration)
         }
-        .listRowBackground(Color.white.opacity(0.55))
+        .listRowBackground(Rectangle().fill(.regularMaterial))
     }
 
     private var saveSection: some View {
@@ -120,15 +118,13 @@ struct CreateProgramView: View {
             Button {
                 saveProgram()
             } label: {
-                HStack {
-                    Spacer()
-                    Text("Enregistrer le programme").fontWeight(.semibold)
-                    Spacer()
-                }
+                Text("Enregistrer le programme")
+                    .fontWeight(.semibold)
+                    .frame(maxWidth: .infinity)
             }
             .disabled(!isValid)
         }
-        .listRowBackground(Color.white.opacity(0.55))
+        .listRowBackground(Rectangle().fill(.regularMaterial))
     }
 
     // MARK: - Actions
@@ -152,7 +148,8 @@ struct CreateProgramView: View {
     private func saveProgram() {
         let program = Program(
             name: name.trimmingCharacters(in: .whitespaces),
-            programDescription: programDescription.isEmpty ? nil : programDescription.trimmingCharacters(in: .whitespaces),
+            programDescription: programDescription.isEmpty
+                ? nil : programDescription.trimmingCharacters(in: .whitespaces),
             exercises: exercises,
             isPublic: isPublic,
             createdByUID: authService.currentUserUID
@@ -170,7 +167,7 @@ struct CreateProgramView: View {
     }
 }
 
-// MARK: - Exercise Row
+// MARK: - Exercise Edit Row
 
 struct ExerciseEditRowView: View {
     let exercise: ExerciseSet
@@ -185,6 +182,7 @@ struct ExerciseEditRowView: View {
             }
             .font(.caption)
             .foregroundStyle(.secondary)
+            .symbolRenderingMode(.hierarchical)
         }
         .padding(.vertical, 2)
     }

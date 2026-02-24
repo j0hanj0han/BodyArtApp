@@ -15,46 +15,17 @@ struct ProfileView: View {
                 Image("Background").resizable().scaledToFill().ignoresSafeArea()
 
                 List {
-                    Section {
-                        HStack(spacing: 14) {
-                            Image(systemName: "person.crop.circle.fill")
-                                .font(.system(size: 52))
-                                .foregroundStyle(.secondary)
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(authService.currentUser?.displayName ?? "Utilisateur")
-                                    .font(.headline)
-                                Text(authService.currentUser?.email ?? "")
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                        .padding(.vertical, 6)
-                    }
-                    .listRowBackground(Color.white.opacity(0.55))
-
-                    Section {
-                        Button(role: .destructive) {
-                            showSignOutConfirmation = true
-                        } label: {
-                            Label("Se déconnecter", systemImage: "rectangle.portrait.and.arrow.right")
-                        }
-                    }
-                    .listRowBackground(Color.white.opacity(0.55))
-
-                    Section {
-                        Button(role: .destructive) {
-                            showDeleteAccountConfirmation = true
-                        } label: {
-                            Label("Supprimer le compte", systemImage: "person.crop.circle.badge.minus")
-                        }
-                    }
-                    .listRowBackground(Color.white.opacity(0.55))
+                    profileHeaderSection
+                    accountActionsSection
+                    dangerZoneSection
 
                     if let errorMessage {
                         Section {
-                            Text(errorMessage).foregroundStyle(.red).font(.footnote)
+                            Text(errorMessage)
+                                .foregroundStyle(.red)
+                                .font(.footnote)
                         }
-                        .listRowBackground(Color.white.opacity(0.55))
+                        .listRowBackground(Rectangle().fill(.regularMaterial))
                     }
                 }
                 .listStyle(.insetGrouped)
@@ -62,13 +33,21 @@ struct ProfileView: View {
             }
             .navigationTitle("Profil")
             .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
-            .confirmationDialog("Se déconnecter ?", isPresented: $showSignOutConfirmation, titleVisibility: .visible) {
+            .confirmationDialog(
+                "Se déconnecter ?",
+                isPresented: $showSignOutConfirmation,
+                titleVisibility: .visible
+            ) {
                 Button("Se déconnecter", role: .destructive) { signOut() }
                 Button("Annuler", role: .cancel) { }
             } message: {
                 Text("Vous serez redirigé vers l'écran de connexion.")
             }
-            .confirmationDialog("Supprimer le compte ?", isPresented: $showDeleteAccountConfirmation, titleVisibility: .visible) {
+            .confirmationDialog(
+                "Supprimer le compte ?",
+                isPresented: $showDeleteAccountConfirmation,
+                titleVisibility: .visible
+            ) {
                 Button("Supprimer définitivement", role: .destructive) {
                     Task { await deleteAccount() }
                 }
@@ -78,6 +57,53 @@ struct ProfileView: View {
             }
         }
     }
+
+    // MARK: - Sections
+
+    private var profileHeaderSection: some View {
+        Section {
+            HStack(spacing: 16) {
+                Image(systemName: "person.crop.circle.fill")
+                    .font(.system(size: 56))
+                    .foregroundStyle(.tint)
+                    .symbolRenderingMode(.hierarchical)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(authService.currentUser?.displayName ?? "Utilisateur")
+                        .font(.headline)
+                    Text(authService.currentUser?.email ?? "")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .padding(.vertical, 8)
+        }
+        .listRowBackground(Rectangle().fill(.regularMaterial))
+    }
+
+    private var accountActionsSection: some View {
+        Section {
+            Button(role: .destructive) {
+                showSignOutConfirmation = true
+            } label: {
+                Label("Se déconnecter", systemImage: "rectangle.portrait.and.arrow.right")
+            }
+        }
+        .listRowBackground(Rectangle().fill(.regularMaterial))
+    }
+
+    private var dangerZoneSection: some View {
+        Section {
+            Button(role: .destructive) {
+                showDeleteAccountConfirmation = true
+            } label: {
+                Label("Supprimer le compte", systemImage: "person.crop.circle.badge.minus")
+            }
+        }
+        .listRowBackground(Rectangle().fill(.regularMaterial))
+    }
+
+    // MARK: - Actions
 
     private func signOut() {
         do {
@@ -92,13 +118,16 @@ struct ProfileView: View {
         errorMessage = nil
         do {
             try await authService.deleteAccount()
-            let descriptor = FetchDescriptor<User>(predicate: #Predicate<User> { $0.uid == uid })
+            let descriptor = FetchDescriptor<User>(
+                predicate: #Predicate<User> { $0.uid == uid }
+            )
             if let localUser = try? modelContext.fetch(descriptor).first {
                 modelContext.delete(localUser)
             }
         } catch {
             let nsError = error as NSError
-            if nsError.domain == AuthErrorDomain, nsError.code == AuthErrorCode.requiresRecentLogin.rawValue {
+            if nsError.domain == AuthErrorDomain,
+               nsError.code == AuthErrorCode.requiresRecentLogin.rawValue {
                 errorMessage = "Veuillez vous déconnecter et vous reconnecter avant de supprimer votre compte"
             } else {
                 errorMessage = error.localizedDescription

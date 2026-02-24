@@ -1,6 +1,8 @@
 import SwiftUI
 import SwiftData
 
+// MARK: - Program List
+
 struct ProgramListView: View {
     @Query(
         filter: #Predicate<Program> { $0.isPublic },
@@ -34,7 +36,7 @@ struct ProgramListView: View {
                     } label: {
                         ProgramRowView(program: program)
                     }
-                    .listRowBackground(Color.white.opacity(0.55))
+                    .listRowBackground(Rectangle().fill(.regularMaterial))
                 }
                 .listStyle(.insetGrouped)
                 .scrollContentBackground(.hidden)
@@ -43,11 +45,13 @@ struct ProgramListView: View {
     }
 }
 
+// MARK: - Program Row
+
 struct ProgramRowView: View {
     let program: Program
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 6) {
             Text(program.name)
                 .font(.headline)
 
@@ -64,65 +68,86 @@ struct ProgramRowView: View {
             }
             .font(.caption)
             .foregroundStyle(.tertiary)
+            .symbolRenderingMode(.hierarchical)
         }
         .padding(.vertical, 4)
     }
 }
 
+// MARK: - Program Detail
+
 struct ProgramDetailView: View {
     @Bindable var program: Program
 
     var body: some View {
-        ZStack {
+        ZStack(alignment: .bottom) {
             Image("Background").resizable().scaledToFill().ignoresSafeArea()
 
             List {
-                Section("Description") {
-                    Text(program.programDescription ?? "Aucune description")
-                        .foregroundStyle(program.programDescription == nil ? .secondary : .primary)
-                }
-                .listRowBackground(Color.white.opacity(0.55))
-
-                Section("Exercices") {
-                    ForEach(program.sortedExercises) { exercise in
-                        ExerciseRowView(exercise: exercise)
-                    }
-                }
-                .listRowBackground(Color.white.opacity(0.55))
-
-                Section("Informations") {
-                    LabeledContent("Durée totale", value: program.formattedDuration)
-                    LabeledContent("Nombre d'exercices", value: "\(program.exercises.count)")
-                }
-                .listRowBackground(Color.white.opacity(0.55))
-
-                Section {
-                    NavigationLink {
-                        ExecuteProgramView(program: program)
-                    } label: {
-                        Label("Démarrer l'entraînement", systemImage: "play.fill")
-                            .font(.headline)
-                            .foregroundStyle(.green)
-                            .frame(maxWidth: .infinity)
-                    }
-                }
-                .listRowBackground(Color.white.opacity(0.55))
-                .disabled(program.exercises.isEmpty)
+                descriptionSection
+                exercisesSection
+                infoSection
             }
             .listStyle(.insetGrouped)
             .scrollContentBackground(.hidden)
+            .safeAreaInset(edge: .bottom) {
+                startWorkoutBar
+            }
         }
         .navigationTitle(program.name)
         .navigationBarTitleDisplayMode(.large)
         .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
     }
+
+    private var descriptionSection: some View {
+        Section("Description") {
+            Text(program.programDescription ?? "Aucune description")
+                .foregroundStyle(program.programDescription == nil ? .secondary : .primary)
+        }
+        .listRowBackground(Rectangle().fill(.regularMaterial))
+    }
+
+    private var exercisesSection: some View {
+        Section("Exercices") {
+            ForEach(program.sortedExercises) { exercise in
+                ExerciseRowView(exercise: exercise)
+            }
+        }
+        .listRowBackground(Rectangle().fill(.regularMaterial))
+    }
+
+    private var infoSection: some View {
+        Section("Informations") {
+            LabeledContent("Durée totale", value: program.formattedDuration)
+            LabeledContent("Nombre d'exercices", value: "\(program.exercises.count)")
+        }
+        .listRowBackground(Rectangle().fill(.regularMaterial))
+    }
+
+    private var startWorkoutBar: some View {
+        NavigationLink {
+            ExecuteProgramView(program: program)
+        } label: {
+            Label("Démarrer l'entraînement", systemImage: "play.fill")
+                .font(.headline)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(.tint, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .foregroundStyle(.white)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 8)
+        }
+        .disabled(program.exercises.isEmpty)
+    }
 }
+
+// MARK: - Exercise Row
 
 struct ExerciseRowView: View {
     let exercise: ExerciseSet
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 6) {
             Text(exercise.name)
                 .font(.headline)
 
@@ -133,6 +158,7 @@ struct ExerciseRowView: View {
             }
             .font(.caption)
             .foregroundStyle(.secondary)
+            .symbolRenderingMode(.hierarchical)
 
             if let notes = exercise.notes {
                 Text(notes)
