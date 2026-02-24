@@ -168,7 +168,6 @@ enum AuthError: LocalizedError {
     case googlePresentationFailed
     case googleTokenMissing
     case appleTokenMissing
-    case appleSignInFailed
     case noCurrentUser
 
     var errorDescription: String? {
@@ -187,8 +186,6 @@ enum AuthError: LocalizedError {
             return "Token Google manquant"
         case .appleTokenMissing:
             return "Token Apple manquant"
-        case .appleSignInFailed:
-            return "La connexion Apple a échoué"
         case .noCurrentUser:
             return "Aucun utilisateur connecté"
         }

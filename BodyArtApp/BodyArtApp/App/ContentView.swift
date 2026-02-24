@@ -3,30 +3,21 @@ import SwiftData
 
 struct ContentView: View {
     var body: some View {
-        ZStack {
-            Image("Background")
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
+        TabView {
+            ProgramListView()
+                .tabItem {
+                    Label("Programmes", systemImage: "list.bullet.clipboard")
+                }
 
-            TabView {
-                ProgramListView()
-                    .tabItem {
-                        Label("Programmes", systemImage: "list.bullet.clipboard")
-                    }
+            CreateProgramView()
+                .tabItem {
+                    Label("Créer", systemImage: "plus.circle")
+                }
 
-                CreateProgramView()
-                    .tabItem {
-                        Label("Créer", systemImage: "plus.circle")
-                    }
-
-                ProfileView()
-                    .tabItem {
-                        Label("Profil", systemImage: "person.circle")
-                    }
-            }
-            .toolbarBackground(.ultraThinMaterial, for: .tabBar)
-            .toolbarBackground(.visible, for: .tabBar)
+            ProfileView()
+                .tabItem {
+                    Label("Profil", systemImage: "person.circle")
+                }
         }
     }
 }
