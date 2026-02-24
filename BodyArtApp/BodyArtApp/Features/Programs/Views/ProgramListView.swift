@@ -18,29 +18,26 @@ struct ProgramListView: View {
 
     @ViewBuilder
     private var content: some View {
-        if programs.isEmpty {
-            ContentUnavailableView(
-                "Aucun programme",
-                systemImage: "list.bullet.clipboard",
-                description: Text("Aucun programme public disponible pour le moment.")
-            )
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background {
-                Image("Background").resizable().scaledToFill().ignoresSafeArea()
-            }
-        } else {
-            List(programs) { program in
-                NavigationLink {
-                    ProgramDetailView(program: program)
-                } label: {
-                    ProgramRowView(program: program)
+        ZStack {
+            Image("Background").resizable().scaledToFill().ignoresSafeArea()
+
+            if programs.isEmpty {
+                ContentUnavailableView(
+                    "Aucun programme",
+                    systemImage: "list.bullet.clipboard",
+                    description: Text("Aucun programme public disponible pour le moment.")
+                )
+            } else {
+                List(programs) { program in
+                    NavigationLink {
+                        ProgramDetailView(program: program)
+                    } label: {
+                        ProgramRowView(program: program)
+                    }
+                    .listRowBackground(Color.white.opacity(0.55))
                 }
-                .listRowBackground(Color.white.opacity(0.55))
-            }
-            .listStyle(.insetGrouped)
-            .scrollContentBackground(.hidden)
-            .background {
-                Image("Background").resizable().scaledToFill().ignoresSafeArea()
+                .listStyle(.insetGrouped)
+                .scrollContentBackground(.hidden)
             }
         }
     }
@@ -76,43 +73,44 @@ struct ProgramDetailView: View {
     @Bindable var program: Program
 
     var body: some View {
-        List {
-            Section("Description") {
-                Text(program.programDescription ?? "Aucune description")
-                    .foregroundStyle(program.programDescription == nil ? .secondary : .primary)
-            }
-            .listRowBackground(Color.white.opacity(0.55))
-
-            Section("Exercices") {
-                ForEach(program.sortedExercises) { exercise in
-                    ExerciseRowView(exercise: exercise)
-                }
-            }
-            .listRowBackground(Color.white.opacity(0.55))
-
-            Section("Informations") {
-                LabeledContent("Durée totale", value: program.formattedDuration)
-                LabeledContent("Nombre d'exercices", value: "\(program.exercises.count)")
-            }
-            .listRowBackground(Color.white.opacity(0.55))
-
-            Section {
-                NavigationLink {
-                    ExecuteProgramView(program: program)
-                } label: {
-                    Label("Démarrer l'entraînement", systemImage: "play.fill")
-                        .font(.headline)
-                        .foregroundStyle(.green)
-                        .frame(maxWidth: .infinity)
-                }
-            }
-            .listRowBackground(Color.white.opacity(0.55))
-            .disabled(program.exercises.isEmpty)
-        }
-        .listStyle(.insetGrouped)
-        .scrollContentBackground(.hidden)
-        .background {
+        ZStack {
             Image("Background").resizable().scaledToFill().ignoresSafeArea()
+
+            List {
+                Section("Description") {
+                    Text(program.programDescription ?? "Aucune description")
+                        .foregroundStyle(program.programDescription == nil ? .secondary : .primary)
+                }
+                .listRowBackground(Color.white.opacity(0.55))
+
+                Section("Exercices") {
+                    ForEach(program.sortedExercises) { exercise in
+                        ExerciseRowView(exercise: exercise)
+                    }
+                }
+                .listRowBackground(Color.white.opacity(0.55))
+
+                Section("Informations") {
+                    LabeledContent("Durée totale", value: program.formattedDuration)
+                    LabeledContent("Nombre d'exercices", value: "\(program.exercises.count)")
+                }
+                .listRowBackground(Color.white.opacity(0.55))
+
+                Section {
+                    NavigationLink {
+                        ExecuteProgramView(program: program)
+                    } label: {
+                        Label("Démarrer l'entraînement", systemImage: "play.fill")
+                            .font(.headline)
+                            .foregroundStyle(.green)
+                            .frame(maxWidth: .infinity)
+                    }
+                }
+                .listRowBackground(Color.white.opacity(0.55))
+                .disabled(program.exercises.isEmpty)
+            }
+            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
         }
         .navigationTitle(program.name)
         .navigationBarTitleDisplayMode(.large)

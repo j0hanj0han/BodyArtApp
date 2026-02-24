@@ -33,15 +33,16 @@ struct CreateProgramView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                programInfoSection
-                exercisesSection
-                summarySection
-                saveSection
-            }
-            .scrollContentBackground(.hidden)
-            .background {
+            ZStack {
                 Image("Background").resizable().scaledToFill().ignoresSafeArea()
+
+                Form {
+                    programInfoSection
+                    exercisesSection
+                    summarySection
+                    saveSection
+                }
+                .scrollContentBackground(.hidden)
             }
             .navigationTitle("Nouveau programme")
             .toolbarBackground(.ultraThinMaterial, for: .navigationBar)

@@ -10,19 +10,20 @@ struct ExecuteProgramView: View {
     }
 
     var body: some View {
-        VStack(spacing: 24) {
-            headerSection
-            Spacer()
-            timerSection
-            Spacer()
-            controlsSection
-            settingsSection
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background {
+        ZStack {
             Image("Background").resizable().scaledToFill().ignoresSafeArea()
+
+            VStack(spacing: 24) {
+                headerSection
+                Spacer()
+                timerSection
+                Spacer()
+                controlsSection
+                settingsSection
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding()
         }
-        .padding()
         .navigationTitle(viewModel.session.program.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.ultraThinMaterial, for: .navigationBar)

@@ -11,53 +11,54 @@ struct ProfileView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                Section {
-                    HStack(spacing: 14) {
-                        Image(systemName: "person.crop.circle.fill")
-                            .font(.system(size: 52))
-                            .foregroundStyle(.secondary)
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(authService.currentUser?.displayName ?? "Utilisateur")
-                                .font(.headline)
-                            Text(authService.currentUser?.email ?? "")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    .padding(.vertical, 6)
-                }
-                .listRowBackground(Color.white.opacity(0.55))
+            ZStack {
+                Image("Background").resizable().scaledToFill().ignoresSafeArea()
 
-                Section {
-                    Button(role: .destructive) {
-                        showSignOutConfirmation = true
-                    } label: {
-                        Label("Se déconnecter", systemImage: "rectangle.portrait.and.arrow.right")
-                    }
-                }
-                .listRowBackground(Color.white.opacity(0.55))
-
-                Section {
-                    Button(role: .destructive) {
-                        showDeleteAccountConfirmation = true
-                    } label: {
-                        Label("Supprimer le compte", systemImage: "person.crop.circle.badge.minus")
-                    }
-                }
-                .listRowBackground(Color.white.opacity(0.55))
-
-                if let errorMessage {
+                List {
                     Section {
-                        Text(errorMessage).foregroundStyle(.red).font(.footnote)
+                        HStack(spacing: 14) {
+                            Image(systemName: "person.crop.circle.fill")
+                                .font(.system(size: 52))
+                                .foregroundStyle(.secondary)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(authService.currentUser?.displayName ?? "Utilisateur")
+                                    .font(.headline)
+                                Text(authService.currentUser?.email ?? "")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .padding(.vertical, 6)
                     }
                     .listRowBackground(Color.white.opacity(0.55))
+
+                    Section {
+                        Button(role: .destructive) {
+                            showSignOutConfirmation = true
+                        } label: {
+                            Label("Se déconnecter", systemImage: "rectangle.portrait.and.arrow.right")
+                        }
+                    }
+                    .listRowBackground(Color.white.opacity(0.55))
+
+                    Section {
+                        Button(role: .destructive) {
+                            showDeleteAccountConfirmation = true
+                        } label: {
+                            Label("Supprimer le compte", systemImage: "person.crop.circle.badge.minus")
+                        }
+                    }
+                    .listRowBackground(Color.white.opacity(0.55))
+
+                    if let errorMessage {
+                        Section {
+                            Text(errorMessage).foregroundStyle(.red).font(.footnote)
+                        }
+                        .listRowBackground(Color.white.opacity(0.55))
+                    }
                 }
-            }
-            .listStyle(.insetGrouped)
-            .scrollContentBackground(.hidden)
-            .background {
-                Image("Background").resizable().scaledToFill().ignoresSafeArea()
+                .listStyle(.insetGrouped)
+                .scrollContentBackground(.hidden)
             }
             .navigationTitle("Profil")
             .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
