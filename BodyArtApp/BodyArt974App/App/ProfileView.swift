@@ -107,10 +107,14 @@ struct ProfileView: View {
         .listRowBackground(Rectangle().fill(.ultraThinMaterial))
     }
 
+    private let privacyPolicyURL = URL(string: "https://j0hanj0han.github.io/BodyArtApp/privacy-policy.html")
+
     private var accountActionsSection: some View {
         Section {
-            Link(destination: URL(string: "https://j0hanj0han.github.io/BodyArtApp/privacy-policy.html")!) {
-                Label("Politique de confidentialité", systemImage: "hand.raised")
+            if let url = privacyPolicyURL {
+                Link(destination: url) {
+                    Label("Politique de confidentialité", systemImage: "hand.raised")
+                }
             }
             Button(role: .destructive) {
                 showSignOutConfirmation = true
