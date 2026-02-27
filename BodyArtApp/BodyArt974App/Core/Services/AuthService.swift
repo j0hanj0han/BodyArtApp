@@ -34,6 +34,15 @@ final class AuthService {
         currentUser?.uid
     }
 
+    var userPhotoURL: URL? {
+        currentUser?.photoURL
+    }
+
+    func reloadUser() async throws {
+        try await currentUser?.reload()
+        currentUser = Auth.auth().currentUser
+    }
+
     // MARK: - Auth State Listener
 
     private func setupAuthStateListener() {

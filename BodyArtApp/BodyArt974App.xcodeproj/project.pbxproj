@@ -11,6 +11,7 @@
 		04A4485D2F1F818100C9CCC8 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 04A4485C2F1F818100C9CCC8 /* FirebaseAuth */; };
 		04A4485F2F1F818100C9CCC8 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 04A4485E2F1F818100C9CCC8 /* FirebaseCore */; };
 		04A448622F1F81B100C9CCC8 /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = 04A448612F1F81B100C9CCC8 /* FacebookLogin */; };
+		04A448642F1F818100C9CCC8 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 04A448632F1F818100C9CCC8 /* FirebaseStorage */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -98,6 +99,7 @@
 				0446E8A02F3F2A2800DD152E /* GoogleSignIn in Frameworks */,
 				04A4485D2F1F818100C9CCC8 /* FirebaseAuth in Frameworks */,
 				04A448622F1F81B100C9CCC8 /* FacebookLogin in Frameworks */,
+				04A448642F1F818100C9CCC8 /* FirebaseStorage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -162,6 +164,7 @@
 				04A4485E2F1F818100C9CCC8 /* FirebaseCore */,
 				04A448612F1F81B100C9CCC8 /* FacebookLogin */,
 				0446E89F2F3F2A2800DD152E /* GoogleSignIn */,
+				04A448632F1F818100C9CCC8 /* FirebaseStorage */,
 			);
 			productName = BodyArtApp;
 			productReference = 04A447B12F1A395B00C9CCC8 /* BodyArt974App.app */;
@@ -685,6 +688,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 04A448602F1F81B100C9CCC8 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
 			productName = FacebookLogin;
+		};
+		04A448632F1F818100C9CCC8 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04A4485B2F1F818100C9CCC8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -1,6 +1,8 @@
 import SwiftUI
 import SwiftData
 import FirebaseAuth
+import FirebaseStorage
+import PhotosUI
 
 struct ProfileView: View {
     @Environment(AuthService.self) private var authService
@@ -8,6 +10,8 @@ struct ProfileView: View {
     @State private var showSignOutConfirmation = false
     @State private var showDeleteAccountConfirmation = false
     @State private var errorMessage: String?
+    @State private var selectedPhotoItem: PhotosPickerItem?
+    @State private var isUploadingPhoto = false
 
     var body: some View {
         NavigationStack {
@@ -32,6 +36,10 @@ struct ProfileView: View {
                 .scrollContentBackground(.hidden)
                 .navigationTitle("Profil")
                 .navigationBarTitleDisplayMode(.inline)
+            }
+            .onChange(of: selectedPhotoItem) { _, item in
+                guard let item else { return }
+                Task { await uploadPhoto(item) }
             }
             .confirmationDialog(
                 "Se déconnecter ?",
@@ -63,10 +71,28 @@ struct ProfileView: View {
     private var profileHeaderSection: some View {
         Section {
             HStack(spacing: 16) {
-                Image(systemName: "person.crop.circle.fill")
-                    .font(.system(size: 56))
-                    .foregroundStyle(.tint)
-                    .symbolRenderingMode(.hierarchical)
+                PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
+                    ZStack(alignment: .bottomTrailing) {
+                        ProfilePhotoView(
+                            url: authService.userPhotoURL,
+                            displayName: authService.currentUser?.displayName,
+                            size: 56
+                        )
+                        .overlay {
+                            if isUploadingPhoto {
+                                Circle().fill(.black.opacity(0.4))
+                                ProgressView().tint(.white)
+                            }
+                        }
+                        Image(systemName: "camera.circle.fill")
+                            .font(.system(size: 18))
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(.white, Color.accentColor)
+                            .background(Circle().fill(.white).padding(2))
+                    }
+                }
+                .buttonStyle(.plain)
+                .disabled(isUploadingPhoto)
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(authService.currentUser?.displayName ?? "Utilisateur")
@@ -106,7 +132,43 @@ struct ProfileView: View {
         .listRowBackground(Rectangle().fill(.ultraThinMaterial))
     }
 
-    // MARK: - Actions
+    // MARK: - Photo Upload
+
+    private func uploadPhoto(_ item: PhotosPickerItem) async {
+        guard let uid = authService.currentUserUID,
+              let data = try? await item.loadTransferable(type: Data.self),
+              let uiImage = UIImage(data: data),
+              let jpegData = uiImage.jpegData(compressionQuality: 0.8) else { return }
+
+        isUploadingPhoto = true
+        defer { isUploadingPhoto = false }
+        errorMessage = nil
+
+        do {
+            let ref = Storage.storage().reference().child("profile_photos/\(uid).jpg")
+            let metadata = StorageMetadata()
+            metadata.contentType = "image/jpeg"
+            _ = try await ref.putDataAsync(jpegData, metadata: metadata)
+            let downloadURL = try await ref.downloadURL()
+
+            let changeRequest = authService.currentUser?.createProfileChangeRequest()
+            changeRequest?.photoURL = downloadURL
+            try await changeRequest?.commitChanges()
+            try await authService.reloadUser()
+
+            let urlString = downloadURL.absoluteString
+            let descriptor = FetchDescriptor<User>(
+                predicate: #Predicate<User> { $0.uid == uid }
+            )
+            if let localUser = try? modelContext.fetch(descriptor).first {
+                localUser.photoURL = urlString
+            }
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    // MARK: - Account Actions
 
     private func signOut() {
         do {
